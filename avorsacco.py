@@ -9,17 +9,17 @@ from datetime import datetime
 import calendar
 
 # setting variable
-page_title = "AVOR TRACKER"
-page_icon = ":moneybag:"
+page_title = "Avor Budget tracker"
+page_icon = Image.open("pic/avor.png")
 layout = "centered"
-contributions = ["katana", "hanny",  "edward"]
-investments= ["rental", "gas", "farming"]
+contributions = ["Salary", "Rental income", "Business" , "Online income", "Other incomes"]
+investments= ["Rent", "Savings", "Business expenses", "Other expenses"]
 logo = Image.open("pic/avor.png")
 currency = "ksh"
 
 # setting page config
 
-st.set_page_config(page_title = page_title, page_icon = page_icon, layout = layout)
+st.set_page_config(page_title=page_title, page_icon=page_icon, layout=layout)
 
 with st.container():
     logo_column, title_column = st.columns((1, 2))
@@ -31,8 +31,8 @@ with st.container():
 
 # setting year and month
 
-years= (datetime.today().year, datetime.today().year +1)
-months= list(calendar.month_name[1:])
+years = (datetime.today().year, datetime.today().year +1)
+months = list(calendar.month_name[1:])
 
 # --------DATABASE INTERFACE-------
 def get_all_periods():
@@ -70,10 +70,10 @@ if selected == "data entry":
 
         "___"
 
-        with st.expander("contributions"):
+        with st.expander("income"):
             for contribution in contributions:
                 st.number_input(f"{contribution}", min_value=0, format="%i", step=10, key=contribution)
-        with st.expander("investment"):
+        with st.expander("expenses"):
             for investment in investments:
                 st.number_input(f"{investment}", min_value=0, format="%i",  step=10, key=investment)
         with st.expander("comment"):
@@ -103,17 +103,17 @@ if selected == "data visualization":
            contributions =period_data.get("contributions")
 
 # create metric
-           total_contributions = sum(contributions.values())
-           total_investments = sum(investments.values())
-           remaining_budget = (total_contributions - total_investments)
+           total_income = sum(contributions.values())
+           total_expenses = sum(investments.values())
+           remaining_budget = (total_income - total_expenses)
            col1, col2, col3, = st.columns(3)
-           col1.metric("total contributions:", f"{total_contributions} {currency}")
-           col2.metric(f" total investments:", f" { total_investments} {currency}")
+           col1.metric("total income:", f"{total_income} {currency}")
+           col2.metric(f" total expenses:", f" { total_expenses} {currency}")
            col3.metric(f" remaining budget:", f"{remaining_budget} {currency}")
            st.text(f"comment: {comment }")
 
     #creating the senky chart
-    label = list(contributions.keys()) + ["total contribution"] + list(investments.keys())
+    label = list(contributions.keys()) + ["total income"] + list(investments.keys())
     source = list(range(len(contributions))) +[len(contributions)] * len(investments)
     target = [len(contributions)] * len(contributions) + [label.index(investment) for investment in investments]
     value = list(contributions.values()) + list(investments.values())
